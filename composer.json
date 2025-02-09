@@ -1,0 +1,11 @@
+{
+    "name": "arken/localhost",
+    "autoload": {
+        "psr-4": {
+            "Arken\\Localhost\\": "src/"
+        }
+    },
+    "require": {
+        "phpoffice/phpspreadsheet": "^4.0"
+    }
+}
