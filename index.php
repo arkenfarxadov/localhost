@@ -5,7 +5,6 @@ require 'vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 // === Настройки ===
-define('API_KEY', 'your_static_api_key_here'); // Статичный API-ключ
 $googleDriveFileId = '1XyDAvetu-aqH5pBh1Yn0up7khtt0crdL'; // ID файла на Google Диске
 $cells = [
     'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9', 'A10', 'A11', 'A12', 'A13', 'A14', 'A15', 'A16',
@@ -20,8 +19,8 @@ $jsonFile = 'data.json'; // Файл для сохранения
  */
 function getExcelData($googleDriveFileId, $cells)
 {
-    $url = "https://drive.google.com/uc?export=download&id=1XyDAvetu-aqH5pBh1Yn0up7khtt0crdL";
-    
+    $url = "https://drive.google.com/uc?export=download&id=$googleDriveFileId";
+
     // Скачиваем файл
     $filePath = 'temp.xlsx';
     file_put_contents($filePath, file_get_contents($url));
@@ -50,32 +49,29 @@ function updateJsonFile($data, $jsonFile)
     file_put_contents($jsonFile, json_encode($jsonData, JSON_PRETTY_PRINT));
 }
 
-// Проверяем API-ключ
-if (!isset($_GET['api_key']) || $_GET['api_key'] !== API_KEY) {
-    http_response_code(403);
-    echo json_encode(['error' => 'Invalid API key']);
-    exit;
-}
-
-// Проверяем, был ли запрос на обновление
-if (isset($_GET['update']) && $_GET['update'] === 'true') {
-    $data = getExcelData($googleDriveFileId, $cells);
-    updateJsonFile($data, $jsonFile);
-    
-    header('Content-Type: application/json');
-    echo json_encode(['timestamp' => date('Y-m-d H:i:s'), 'values' => $data], JSON_PRETTY_PRINT);
-    exit;
-}
-
-// Выдача данных из JSON-файла
+/**
+ * Проверка времени последнего обновления
+ */
 if (file_exists($jsonFile)) {
-    header('Content-Type: application/json');
-    echo file_get_contents($jsonFile);
-    exit;
-} else {
-    http_response_code(404);
-    echo json_encode(['error' => 'Data not found']);
-    exit;
+    $jsonData = json_decode(file_get_contents($jsonFile), true);
+    $lastUpdated = strtotime($jsonData['timestamp']);
+    $currentTime = time();
+
+    // Если прошло менее 60 секунд - не обновляем
+    if (($currentTime - $lastUpdated) < 60) {
+        header('Content-Type: application/json');
+        echo json_encode($jsonData, JSON_PRETTY_PRINT);
+        exit;
+    }
 }
+
+// Если обновление требуется - получаем новые данные
+$data = getExcelData($googleDriveFileId, $cells);
+updateJsonFile($data, $jsonFile);
+
+// Отправляем свежие данные
+header('Content-Type: application/json');
+echo json_encode(['timestamp' => date('Y-m-d H:i:s'), 'values' => $data], JSON_PRETTY_PRINT);
+exit;
 
 ?>
