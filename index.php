@@ -8,23 +8,9 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 $googleDriveFileId = '1poS_CPyX5vOgpTr6M9Hkt9yOeVZVG96v'; // ID файла на Google Диске
 $cells = [
     'month' => 'A1',
-    'numbers' => []
+    'number1' => ['yurt1' => 'B2', 'yurt2' => 'C2', 'yurt3' => 'D2', 'yurt4' => 'E2', 'yurt5' => 'F2', 'yurt6' => 'G2', 'yurt7' => 'H2', 'yurt8' => 'I2', 'yurt9' => 'J2', 'yurt10' => 'K2', 'yurt11' => 'L2', 'yurt12' => 'M2', 'yurt13' => 'N2', 'yurt14' => 'O2', 'yurt15' => 'P2', 'yurt16' => 'Q2', 'yurt17' => 'R2', 'yurt18' => 'S2', 'yurt19' => 'T2', 'yurt20' => 'U2', 'yurt21' => 'V2', 'yurt22' => 'W2', 'yurt23' => 'X2', 'yurt24' => 'Y2', 'yurt25' => 'Z2', 'yurt26' => 'AA2', 'yurt27' => 'AB2', 'yurt28' => 'AC2', 'yurt29' => 'AD2', 'yurt30' => 'AE2', 'yurt31' => 'AF2', 'yurt32' => 'AG2'],
 ];
-
-for ($row = 2; $row <= 32; $row++) {
-    $rowIndex = $row - 1; // Индекс строки (1, 2, 3 и т. д.)
-    $cells['numbers']["number$rowIndex"] = []; // Инициализируем массив
-
-    $yurtIndex = 1;
-    for ($col = 'B'; $col !== 'AH'; $col++) {
-        $cells['numbers']["number$rowIndex"]["yurt$yurtIndex"] = $col . $row;
-        $yurtIndex++;
-    }
-}
-
-$json = json_encode($cells, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-echo $json;
-
+$jsonFile = 'data.json'; // Файл для сохранения
 
 /**
  * Функция получает данные из Excel-файла на Google Диске
@@ -65,7 +51,7 @@ function getExcelData($googleDriveFileId, $cells)
 function updateJsonFile($data, $jsonFile)
 {
     $jsonData = [
-        'timestamp' => date('Y-m-d H:i:s'), 
+        'timestamp' => date('Y-m-d H:i:s'),
         'month' => $data['month']
     ];
 
