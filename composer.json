@@ -1,0 +1,11 @@
+{
+    "name": "root/localhost",
+    "autoload": {
+        "psr-4": {
+            "Root\\Localhost\\": "src/"
+        }
+    },
+    "require": {
+        "phpoffice/phpspreadsheet": "^4.0"
+    }
+}
