@@ -17,11 +17,11 @@ $cells = [
 
 for ($row = 2; $row <= 32; $row++) {
     $rowIndex = $row - 1; // Преобразуем индекс строки (начиная с 1)
-    $cells['numbers']["$rowIndex"] = []; // Инициализируем массив для строки
+    $cells['numbers']['$rowIndex'] = []; // Инициализируем массив для строки
     
     $yurtIndex = 1;
     for ($col = 'B'; $col !== 'AH'; $col++) {
-        $cells['numbers']["$rowIndex"][] = [ "yurt$yurtIndex" => $col . $row ];
+        $cells['numbers']['$rowIndex'][] = [ 'yurt$yurtIndex' => $col . $row ];
         $yurtIndex++;
     }
 }
