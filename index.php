@@ -16,10 +16,18 @@ $cells = [
 
 // Автоматическое заполнение номеров строк и колонок
 for ($row = 2; $row <= 32; $row++) {
+    $day = $row - 1;
+    $cells['numbers'][$day] = [];
+
+    $yurtNumber = 1;
     for ($col = 'B'; $col !== 'AH'; $col++) {
-        $cells['numbers'][$row - 1][] = $col . $row;
+        $cells['numbers'][$day]["yurt{$yurtNumber}"] = $col . $row;
+        $yurtNumber++;
     }
 }
+
+print_r($cells);
+
 
 /**
  * Функция получает данные из Excel-файла на Google Диске
