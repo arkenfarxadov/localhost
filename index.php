@@ -15,21 +15,17 @@ $cells = [
     'numbers' => []
 ];
 
+// Автоматическое заполнение номеров строк и колонок
 for ($row = 2; $row <= 32; $row++) {
-    $rowIndex = $row - 1; // Преобразуем индекс строки (начиная с 1)
-    $cells['numbers']['$rowIndex'] = []; // Инициализируем массив для строки
-    
-    $yurtIndex = 1;
+    $day = $row - 1;
+    $cells['numbers'][$day] = [];
+
+    $yurtNumber = 1;
     for ($col = 'B'; $col !== 'AH'; $col++) {
-        $cells['numbers']['$rowIndex'][] = [ 'yurt$yurtIndex' => $col . $row ];
-        $yurtIndex++;
+        $cells['numbers'][$day]["yurt{$yurtNumber}"] = $col . $row;
+        $yurtNumber++;
     }
 }
-
-$json = json_encode($cells, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-echo $json;
-
-
 
 /**
  * Функция получает данные из Excel-файла на Google Диске
