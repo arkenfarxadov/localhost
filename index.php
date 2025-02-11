@@ -23,6 +23,7 @@ for ($row = 2; $row <= 32; $row++) {
     }
 }
 
+print_r($cells);
 
 
 /**
