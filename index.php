@@ -9,21 +9,26 @@ $googleDriveFileId = '1poS_CPyX5vOgpTr6M9Hkt9yOeVZVG96v'; // ID файла на 
 $jsonFile = 'data.json'; // Файл для сохранения
 
 // Определение ячеек, которые нужно получить
+
 $cells = [
     'month' => 'A1',
     'numbers' => []
 ];
 
-// Автоматическое заполнение номеров строк и колонок
 for ($row = 2; $row <= 32; $row++) {
+    $rowIndex = $row - 1; // Преобразуем индекс строки (начиная с 1)
+    $cells['numbers']["$rowIndex"] = []; // Инициализируем массив для строки
+    
     $yurtIndex = 1;
     for ($col = 'B'; $col !== 'AH'; $col++) {
-        $cells['numbers'][$row - 1]["yurt$yurtIndex"] = $col . $row;
+        $cells['numbers']["$rowIndex"][] = [ "yurt$yurtIndex" => $col . $row ];
         $yurtIndex++;
     }
 }
 
-print_r($cells);
+$json = json_encode($cells, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+echo $json;
+
 
 
 /**
