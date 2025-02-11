@@ -9,7 +9,6 @@ $googleDriveFileId = '1poS_CPyX5vOgpTr6M9Hkt9yOeVZVG96v'; // ID файла на 
 $jsonFile = 'data.json'; // Файл для сохранения
 
 // Определение ячеек, которые нужно получить
-
 $cells = [
     'month' => 'A1',
     'numbers' => []
@@ -17,13 +16,8 @@ $cells = [
 
 // Автоматическое заполнение номеров строк и колонок
 for ($row = 2; $row <= 32; $row++) {
-    $day = $row - 1;
-    $cells['numbers'][$day] = [];
-
-    $yurtNumber = 1;
     for ($col = 'B'; $col !== 'AH'; $col++) {
-        $cells['numbers'][$day]["yurt{$yurtNumber}"] = $col . $row;
-        $yurtNumber++;
+        $cells['numbers'][$row - 1][] = $col . $row;
     }
 }
 
