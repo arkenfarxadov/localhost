@@ -46,6 +46,9 @@ $cells = [
 /**
  * Получает данные из Excel-файла на Google Диске
  */
+/**
+ * Получает данные из Excel-файла на Google Диске
+ */
 function getExcelData($googleDriveFileId, $cells)
 {
     $url = "https://drive.google.com/uc?export=download&id=$googleDriveFileId";
@@ -60,14 +63,19 @@ function getExcelData($googleDriveFileId, $cells)
         if (is_array($cell)) {
             $data[$key] = [];
             foreach ($cell as $subCell) {
-                $data[$key][] = $sheet->getCell($subCell)->getValue();
+                // Получаем значение ячейки и заменяем пустое значение на 0
+                $value = $sheet->getCell($subCell)->getValue();
+                $data[$key][] = ($value === null || $value === '') ? 0 : $value;
             }
         } else {
-            $data[$key] = $sheet->getCell($cell)->getValue();
+            // Получаем значение ячейки и заменяем пустое значение на 0
+            $value = $sheet->getCell($cell)->getValue();
+            $data[$key] = ($value === null || $value === '') ? 0 : $value;
         }
     }
     return $data;
 }
+
 
 /**
  * Обновляет JSON-файл с новыми данными
