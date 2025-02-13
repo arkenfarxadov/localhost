@@ -1,5 +1,37 @@
 <?php
 
+function sendPostRequest() {
+    $url = 'http://45.92.173.241/index.php'; // Адрес для отправки запроса
+    $data = [
+        'param1' => 'значение1',
+        'param2' => 'значение2'
+    ];
+
+    $options = [
+        'http' => [
+            'header'  => "Content-Type: application/x-www-form-urlencoded\r\n",
+            'method'  => 'POST',
+            'content' => http_build_query($data)
+        ]
+    ];
+
+    $context  = stream_context_create($options);
+    $result = file_get_contents($url, false, $context);
+
+    if ($result === FALSE) {
+        echo "Ошибка при отправке запроса\n";
+    } else {
+        echo "Запрос успешно отправлен: $result\n";
+    }
+}
+
+// Бесконечный цикл отправки запросов каждую минуту
+set_time_limit(0); // Отключаем лимит времени выполнения скрипта
+while (true) {
+    sendPostRequest();
+    sleep(60); // Ждать 60 секунд перед следующим запросом
+}
+
 require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
