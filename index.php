@@ -5,7 +5,7 @@ require 'vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 // === Настройки ===
-$googleDriveFileId = '1QS0kHrdr0zJhQQVeXNldKyAAtw2hh4vXrhEph1flctU'; // ID файла на Google Диске
+$googleDriveFileId = '1poS_CPyX5vOgpTr6M9Hkt9yOeVZVG96v'; // ID файла на Google Диске
 $jsonFile = 'data.json'; // Файл для сохранения
 $cells = [
     'month' => 'A1',
