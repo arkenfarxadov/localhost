@@ -7,7 +7,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 // === Настройки ===
 $googleDriveFileId = '1poS_CPyX5vOgpTr6M9Hkt9yOeVZVG96v'; // ID файла на Google Диске
 $jsonFile = 'data.json'; // Файл для сохранения
-$sheetIndex = 1;
+$sheetIndex = 7;
 $cells = [
     'month' => 'A1',
     'number1' => ['B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2', 'J2', 'K2', 'L2', 'M2', 'N2', 'O2', 'P2', 'Q2', 'R2', 'S2', 'T2', 'U2', 'V2', 'W2', 'X2', 'Y2', 'Z2', 'AA2', 'AB2', 'AC2', 'AD2', 'AE2', 'AF2', 'AG2'],
