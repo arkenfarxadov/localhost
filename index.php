@@ -6,6 +6,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 // === Настройки ===
 $googleDriveFileId = '1poS_CPyX5vOgpTr6M9Hkt9yOeVZVG96v'; // ID файла на Google Диске
+$jsonFile = 'data.json'; // Файл для сохранения
 $cells = [
     'month' => 'A1',
     'number1' => ['B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2', 'J2', 'K2', 'L2', 'M2', 'N2', 'O2', 'P2', 'Q2', 'R2', 'S2', 'T2', 'U2', 'V2', 'W2', 'X2', 'Y2', 'Z2', 'AA2', 'AB2', 'AC2', 'AD2', 'AE2', 'AF2', 'AG2'],
@@ -39,44 +40,41 @@ $cells = [
     'number29' => ['B30', 'C30', 'D30', 'E30', 'F30', 'G30', 'H30', 'I30', 'J30', 'K30', 'L30', 'M30', 'N30', 'O30', 'P30', 'Q30', 'R30', 'S30', 'T30', 'U30', 'V30', 'W30', 'X30', 'Y30', 'Z30', 'AA30', 'AB30', 'AC30', 'AD30', 'AE30', 'AF30', 'AG30'],
     'number30' => ['B31', 'C31', 'D31', 'E31', 'F31', 'G31', 'H31', 'I31', 'J31', 'K31', 'L31', 'M31', 'N31', 'O31', 'P31', 'Q31', 'R31', 'S31', 'T31', 'U31', 'V31', 'W31', 'X31', 'Y31', 'Z31', 'AA31', 'AB31', 'AC31', 'AD31', 'AE31', 'AF31', 'AG31'],
     'number31' => ['B32', 'C32', 'D32', 'E32', 'F32', 'G32', 'H32', 'I32', 'J32', 'K32', 'L32', 'M32', 'N32', 'O32', 'P32', 'Q32', 'R32', 'S32', 'T32', 'U32', 'V32', 'W32', 'X32', 'Y32', 'Z32', 'AA32', 'AB32', 'AC32', 'AD32', 'AE32', 'AF32', 'AG32'],
+    // Добавь остальные ячейки, если нужно
 ];
-$jsonFile = 'data.json'; // Файл для сохранения
-
-/**
- * Функция получает данные из Excel-файла на Google Диске
- */
-function getExcelData($googleDriveFileId, $cells)
+function getExcelData($googleDriveFileId, $cells, $sheetIndex = 1)
 {
     $url = "https://drive.google.com/uc?export=download&id=$googleDriveFileId";
-
-    // Скачиваем файл
     $filePath = 'temp.xlsx';
     file_put_contents($filePath, file_get_contents($url));
 
-    // Загружаем Excel-файл
     $spreadsheet = IOFactory::load($filePath);
-    $sheet = $spreadsheet->getActiveSheet();
 
-    // Получаем данные из указанных ячеек
+    // Получаем нужный лист по индексу
+    $sheet = $spreadsheet->getSheet($sheetIndex);
+
     $data = [];
     foreach ($cells as $key => $cell) {
         if (is_array($cell)) {
-            // Если несколько ячеек, получаем массив значений
             $data[$key] = [];
             foreach ($cell as $subCell) {
-                $data[$key][] = $sheet->getCell($subCell)->getValue();
+                // Получаем значение ячейки и заменяем пустое значение на 0
+                $value = $sheet->getCell($subCell)->getValue();
+                $data[$key][] = ($value === null || $value === '') ? "-----" : $value;
             }
         } else {
-            // Если одна ячейка, получаем одно значение
-            $data[$key] = $sheet->getCell($cell)->getValue();
+            // Получаем значение ячейки и заменяем пустое значение на 0
+            $value = $sheet->getCell($cell)->getValue();
+            $data[$key] = ($value === null || $value === '') ? "-----" : $value;
         }
     }
     return $data;
 }
 
 
+
 /**
- * Функция обновляет JSON-файл с новыми данными
+ * Обновляет JSON-файл с новыми данными
  */
 function updateJsonFile($data, $jsonFile)
 {
@@ -88,28 +86,25 @@ function updateJsonFile($data, $jsonFile)
 }
 
 /**
- * Проверка времени последнего обновления
+ * API обработка запросов
  */
-if (file_exists($jsonFile)) {
-    $jsonData = json_decode(file_get_contents($jsonFile), true);
-    $lastUpdated = strtotime($jsonData['timestamp']);
-    $currentTime = time();
+header('Content-Type: application/json');
 
-    // Если прошло менее 60 секунд - не обновляем
-    if (($currentTime - $lastUpdated) < 60) {
-        header('Content-Type: application/json');
-        echo json_encode($jsonData, JSON_PRETTY_PRINT);
-        exit;
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if (file_exists($jsonFile)) {
+        echo file_get_contents($jsonFile);
+    } else {
+        echo json_encode(['error' => 'No data available']);
     }
+    exit;
 }
 
-// Если обновление требуется - получаем новые данные
-$data = getExcelData($googleDriveFileId, $cells);
-updateJsonFile($data, $jsonFile);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $data = getExcelData($googleDriveFileId, $cells);
+    updateJsonFile($data, $jsonFile);
+    echo json_encode(['status' => 'success', 'timestamp' => date('Y-m-d H:i:s'), 'values' => $data], JSON_PRETTY_PRINT);
+    exit;
+}
 
-// Отправляем свежие данные
-header('Content-Type: application/json');
-echo json_encode(['timestamp' => date('Y-m-d H:i:s'), 'values' => $data], JSON_PRETTY_PRINT);
-exit;
-
-?>
+http_response_code(405);
+echo json_encode(['error' => 'Method not allowed']);
