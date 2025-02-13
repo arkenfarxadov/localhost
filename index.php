@@ -42,7 +42,7 @@ $cells = [
     'number31' => ['B32', 'C32', 'D32', 'E32', 'F32', 'G32', 'H32', 'I32', 'J32', 'K32', 'L32', 'M32', 'N32', 'O32', 'P32', 'Q32', 'R32', 'S32', 'T32', 'U32', 'V32', 'W32', 'X32', 'Y32', 'Z32', 'AA32', 'AB32', 'AC32', 'AD32', 'AE32', 'AF32', 'AG32'],
     // Добавь остальные ячейки, если нужно
 ];
-function getExcelData($googleDriveFileId, $cells)
+function getExcelData($googleDriveFileId, $cells, $sheetIndex = 0)
 {
     $url = "https://drive.google.com/uc?export=download&id=$googleDriveFileId";
     $filePath = 'temp.xlsx';
@@ -51,7 +51,7 @@ function getExcelData($googleDriveFileId, $cells)
     $spreadsheet = IOFactory::load($filePath);
 
     // Получаем нужный лист по индексу
-    $sheet = $spreadsheet->getSheet();
+    $sheet = $spreadsheet->getSheet($sheetIndex);
 
     $data = [];
     foreach ($cells as $key => $cell) {
