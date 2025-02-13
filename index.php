@@ -7,7 +7,6 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 // === Настройки ===
 $googleDriveFileId = '1poS_CPyX5vOgpTr6M9Hkt9yOeVZVG96v'; // ID файла на Google Диске
 $jsonFile = 'data.json'; // Файл для сохранения
-$sheetIndex = 7;
 $cells = [
     'month' => 'A1',
     'number1' => ['B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2', 'J2', 'K2', 'L2', 'M2', 'N2', 'O2', 'P2', 'Q2', 'R2', 'S2', 'T2', 'U2', 'V2', 'W2', 'X2', 'Y2', 'Z2', 'AA2', 'AB2', 'AC2', 'AD2', 'AE2', 'AF2', 'AG2'],
@@ -43,7 +42,7 @@ $cells = [
     'number31' => ['B32', 'C32', 'D32', 'E32', 'F32', 'G32', 'H32', 'I32', 'J32', 'K32', 'L32', 'M32', 'N32', 'O32', 'P32', 'Q32', 'R32', 'S32', 'T32', 'U32', 'V32', 'W32', 'X32', 'Y32', 'Z32', 'AA32', 'AB32', 'AC32', 'AD32', 'AE32', 'AF32', 'AG32'],
     // Добавь остальные ячейки, если нужно
 ];
-function getExcelData($googleDriveFileId, $cells, $sheetIndex)
+function getExcelData($googleDriveFileId, $cells, $sheetIndex = 7)
 {
     $url = "https://drive.google.com/uc?export=download&id=$googleDriveFileId";
     $filePath = 'temp.xlsx';
