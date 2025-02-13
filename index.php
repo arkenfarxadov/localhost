@@ -1,37 +1,5 @@
 <?php
 
-function sendPostRequest() {
-    $url = 'http://45.92.173.241/index.php'; // Адрес для отправки запроса
-    $data = [
-        'param1' => 'значение1',
-        'param2' => 'значение2'
-    ];
-
-    $options = [
-        'http' => [
-            'header'  => "Content-Type: application/x-www-form-urlencoded\r\n",
-            'method'  => 'POST',
-            'content' => http_build_query($data)
-        ]
-    ];
-
-    $context  = stream_context_create($options);
-    $result = file_get_contents($url, false, $context);
-
-    if ($result === FALSE) {
-        echo "Ошибка при отправке запроса\n";
-    } else {
-        echo "Запрос успешно отправлен: $result\n";
-    }
-}
-
-// Бесконечный цикл отправки запросов каждую минуту
-set_time_limit(0); // Отключаем лимит времени выполнения скрипта
-while (true) {
-    sendPostRequest();
-    sleep(60); // Ждать 60 секунд перед следующим запросом
-}
-
 require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -74,7 +42,7 @@ $cells = [
     'number31' => ['B32', 'C32', 'D32', 'E32', 'F32', 'G32', 'H32', 'I32', 'J32', 'K32', 'L32', 'M32', 'N32', 'O32', 'P32', 'Q32', 'R32', 'S32', 'T32', 'U32', 'V32', 'W32', 'X32', 'Y32', 'Z32', 'AA32', 'AB32', 'AC32', 'AD32', 'AE32', 'AF32', 'AG32'],
     // Добавь остальные ячейки, если нужно
 ];
-function getExcelData($googleDriveFileId, $cells, $sheetIndex = 0)
+function getExcelData($googleDriveFileId, $cells, $sheetIndex = 1   )
 {
     $url = "https://drive.google.com/uc?export=download&id=$googleDriveFileId";
     $filePath = 'temp.xlsx';
