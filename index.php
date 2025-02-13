@@ -42,7 +42,7 @@ $cells = [
     'number31' => ['B32', 'C32', 'D32', 'E32', 'F32', 'G32', 'H32', 'I32', 'J32', 'K32', 'L32', 'M32', 'N32', 'O32', 'P32', 'Q32', 'R32', 'S32', 'T32', 'U32', 'V32', 'W32', 'X32', 'Y32', 'Z32', 'AA32', 'AB32', 'AC32', 'AD32', 'AE32', 'AF32', 'AG32'],
     // Добавь остальные ячейки, если нужно
 ];
-function getExcelData($googleDriveFileId, $cells, $sheetIndex = 0)
+function getExcelData($googleDriveFileId, $cells, $sheetName)
 {
     $url = "https://drive.google.com/uc?export=download&id=$googleDriveFileId";
     $filePath = 'temp.xlsx';
@@ -50,26 +50,33 @@ function getExcelData($googleDriveFileId, $cells, $sheetIndex = 0)
 
     $spreadsheet = IOFactory::load($filePath);
 
-    // Получаем нужный лист по индексу
-    $sheet = $spreadsheet->getSheet($sheetIndex);
+    // Получаем список листов
+    $allSheetNames = $spreadsheet->getSheetNames();
+
+    // Проверяем, существует ли указанный лист
+    if (!in_array($sheetName, $allSheetNames)) {
+        die(json_encode(['error' => "Лист '$sheetName' не найден. Доступные листы: " . implode(', ', $allSheetNames)], JSON_PRETTY_PRINT));
+    }
+
+    // Получаем нужный лист по имени
+    $sheet = $spreadsheet->getSheetByName($sheetName);
 
     $data = [];
     foreach ($cells as $key => $cell) {
         if (is_array($cell)) {
             $data[$key] = [];
             foreach ($cell as $subCell) {
-                // Получаем значение ячейки и заменяем пустое значение на 0
                 $value = $sheet->getCell($subCell)->getValue();
                 $data[$key][] = ($value === null || $value === '') ? "-----" : $value;
             }
         } else {
-            // Получаем значение ячейки и заменяем пустое значение на 0
             $value = $sheet->getCell($cell)->getValue();
             $data[$key] = ($value === null || $value === '') ? "-----" : $value;
         }
     }
     return $data;
 }
+
 
 
 
@@ -100,6 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $sheetName= "Август";
     $data = getExcelData($googleDriveFileId, $cells);
     updateJsonFile($data, $jsonFile);
     echo json_encode(['status' => 'success', 'timestamp' => date('Y-m-d H:i:s'), 'values' => $data], JSON_PRETTY_PRINT);
