@@ -58,10 +58,12 @@ function getExcelData($googleDriveFileId, $cells, $sheetIndex = 0)
         if (is_array($cell)) {
             $data[$key] = [];
             foreach ($cell as $subCell) {
+                // Получаем значение ячейки и заменяем пустое значение на 0
                 $value = $sheet->getCell($subCell)->getValue();
                 $data[$key][] = ($value === null || $value === '') ? "-----" : $value;
             }
         } else {
+            // Получаем значение ячейки и заменяем пустое значение на 0
             $value = $sheet->getCell($cell)->getValue();
             $data[$key] = ($value === null || $value === '') ? "-----" : $value;
         }
